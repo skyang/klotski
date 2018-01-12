@@ -3,9 +3,9 @@ import {
     Text,
     View,
     StyleSheet,
-    Dimensions,
-    Alert
+    Dimensions
 } from 'react-native'
+import Block from '../Components/Block'
 
 const { width, height } = Dimensions.get('window')
 // 以屏幕宽度为基准，华容道是一个4*5的棋盘，单位块大小为棋盘宽度的1/4
@@ -25,20 +25,20 @@ let blockUnit = width * parseInt(containerWidthRatio) / 100 * 0.25
  */
 let blocks = [
     {
+        id: 'cc',
+        size: 4,
+        type: 1,
+        name: '曹操',
+        position: [1, 0],
+        color: '#aaa'
+    },
+    {
         id: 'gy',
         size: 2,
         type: 2,
         name: '关羽',
         position: [1, 2],
         color: '#bbb'
-    },
-    {
-        id: 'cc',
-        size: 4,
-        type: 1,
-        name: '曹操',
-        position: [0, 1],
-        color: '#aaa'
     },
     {
         id: 'zf',
@@ -112,61 +112,22 @@ export default class Game extends React.Component {
         gesturesEnabled: false
     }
 
-    _makeStyle({ type, color, position }) {
-        switch (type) {
-            case 1:
-                return {
-                    position: 'absolute',
-                    height: blockUnit * 2,
-                    width: blockUnit * 2,
-                    backgroundColor: color,
-                    left: blockUnit * position[1],
-                    top: blockUnit * position[0]
-                }
-            case 2:
-                return {
-                    position: 'absolute',
-                    height: blockUnit,
-                    width: blockUnit * 2,
-                    backgroundColor: color,
-                    left: blockUnit * position[0],
-                    top: blockUnit * position[1]
-                }
-            case 3:
-                return {
-                    position: 'absolute',
-                    height: blockUnit * 2,
-                    width: blockUnit,
-                    backgroundColor: color,
-                    left: blockUnit * position[0],
-                    top: blockUnit * position[1]
-                }
-            case 4:
-                return {
-                    position: 'absolute',
-                    height: blockUnit,
-                    width: blockUnit,
-                    backgroundColor: color,
-                    left: blockUnit * position[0],
-                    top: blockUnit * position[1]
-                }
-        }
+    onMove (msg) {
+        console.log('trigger on move:', msg)
     }
 
-    render() {
+    render () {
         return (
             <View style={styles.pageContainer}>
                 <Text>Game</Text>
                 <View style={styles.container}>
                     {blocks.map(block => (
-                        <View
+                        <Block
                             key={block.id}
-                            style={this._makeStyle(block)}
+                            block={block}
+                            onMove={(msg) => this.onMove(msg)}
                         >
-                            <Text>
-                                {block.name}
-                            </Text>
-                        </View>
+                        </Block>
                     ))}
                 </View>
             </View>

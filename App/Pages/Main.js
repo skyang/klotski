@@ -19,6 +19,10 @@ export default class Game extends React.Component {
                     title="开始游戏"
                 ></Button>
                 <Button
+                    onPress={this.goPage.bind(this, 'Game')}
+                    title="自定义游戏"
+                ></Button>
+                <Button
                     onPress={this.goPage.bind(this, 'Rank')}
                     title="排行榜"
                 ></Button>

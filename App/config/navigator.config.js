@@ -4,6 +4,8 @@ import About from '../Pages/About'
 import Game from '../Pages/Game'
 import Rank from '../Pages/Rank'
 import Setting from '../Pages/Setting'
+import Test from '../Pages/Test'
+import TestPanResonder from '../Pages/TestPanResonder'
 
 export default StackNavigator({
     Main: {
@@ -23,9 +25,15 @@ export default StackNavigator({
     },
     Setting: {
         screen: Setting
-    }
+    },
+    Test: {
+        screen: Test
+    },
+    TestPanResonder: {
+        screen: TestPanResonder
+    },
 }, {
-    initialRouteName: 'Main',
+    initialRouteName: 'Game',
     headerMode: 'none'
     // mode: 'modal'
 })
