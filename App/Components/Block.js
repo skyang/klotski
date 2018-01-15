@@ -2,7 +2,8 @@ import React from 'react'
 import {
     View,
     Text,
-    Dimensions
+    Dimensions,
+    PanResponder
 } from 'react-native'
 import { assign } from 'lodash'
 
@@ -16,14 +17,22 @@ export default class Block extends React.Component {
     constructor (props) {
         super(props)
         console.log(props)
+        this._updateNativeStyles = this._updateNativeStyles.bind(this)
     }
+
+    panBlock = {};
+    _panResponder = {};
+    _panStyles = {};
+    _initLeft = 10;
+    _initTop = 10;
+    _direction = '';    // 初始移动的方向，分为`行`横向移动(row)和`列`纵向移动(column)
 
     _makeStyle ({ type, color, position }) {
         const baseStyle = {
             position: 'absolute',
-            backgroundColor: color,
-            left: blockUnit * position[0],
-            top: blockUnit * position[1]
+            backgroundColor: color
+            // left: blockUnit * position[0],
+            // top: blockUnit * position[1]
         }
         switch (type) {
             case 1:
@@ -54,11 +63,67 @@ export default class Block extends React.Component {
         this.props.onMove(111)
     }
 
+    _updateNativeStyles () {
+        console.info('update native style')
+        this.panBlock && this.panBlock.setNativeProps(this._panStyles);
+    }
+
+    _handlePanResponderGrant (e, gestureState) {
+        console.log(e, gestureState)
+    }
+
+    _handlePanResponderMove (e, gestureState) {
+        console.log(this._panStyles)
+        this._panStyles.style.left = this._initLeft + gestureState.dx;
+        this._panStyles.style.top = this._initTop + gestureState.dy;
+        this._updateNativeStyles();
+    }
+
+    _handlePanResponderEnd (e, gestureState) {
+        this._initLeft += gestureState.dx;
+        this._initTop += gestureState.dy;
+        // this._panStyles.style.left = this._initLeft;
+        // this._panStyles.style.top = this._initTop;
+        // this._initLeft = 50;
+        // this._initTop = 50;
+        // this._updateNativeStyles();
+    }
+
+    componentWillMount () {
+        this._panResponder = PanResponder.create({
+            onStartShouldSetPanResponder: (evt, gestureState) => true,
+            onStartShouldSetResponderCapture: (evt, gestureState) => true,
+            onMoveShouldSetPanResponder: (evt, gestureState) => true,
+            onMoveShouldSetPanResponderCapture: (evt, gestureState) => true,
+            onPanResponderGrant: this._handlePanResponderGrant.bind(this),
+            onPanResponderMove: this._handlePanResponderMove.bind(this),
+            onPanResponderRelease: this._handlePanResponderEnd.bind(this),
+            onPanResponderTerminate: this._handlePanResponderEnd.bind(this),
+        })
+        this._initLeft = blockUnit * this.props.block.position[0]
+        this._initTop = blockUnit * this.props.block.position[1]
+        this._panStyles = {
+            style: {
+                left: this._initLeft,
+                top: this._initTop
+            }
+        }
+        console.log('pan style:', this._panStyles)
+    }
+
+    componentDidMount () {
+        this._updateNativeStyles();
+    }
+
     render () {
         return (
             <View
+                ref={(panBlock) => {
+                    this.panBlock = panBlock
+                }}
                 style={this._makeStyle(this.props.block)}
                 onPress={this._onPress.bind(this)}
+                {...this._panResponder.panHandlers}
             >
                 <Text onPress={this._onPress.bind(this)}>
                     {this.props.block.name}
