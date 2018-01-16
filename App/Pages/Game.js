@@ -105,15 +105,29 @@ let blocks = [
         color: '#a00'
     }
 ]
-
 export default class Game extends React.Component {
+    constructor (props) {
+        super(props)
+        this.state = {
+            direction: []
+        }
+    }
+
     static navigationOptions = {
         title: 'Game',
         gesturesEnabled: false
     }
 
-    onMove (msg) {
-        console.log('trigger on move:', msg)
+    getAvailableDirection (block) {
+        console.log('trigger on move:', block)
+        // 初始移动的方向，分为`上`（up），`下`(down)，`左`(left)，`右`(right)
+        return []
+    }
+
+    onStartMove (block) {
+        this.setState({
+            direction: this.getAvailableDirection(block)
+        })
     }
 
     render () {
@@ -125,7 +139,8 @@ export default class Game extends React.Component {
                         <Block
                             key={block.id}
                             block={block}
-                            onMove={(msg) => this.onMove(msg)}
+                            availableDirection={this.state.direction}
+                            onStartMove={(msg) => this.onStartMove(msg)}
                         >
                         </Block>
                     ))}
@@ -134,6 +149,7 @@ export default class Game extends React.Component {
         )
     }
 }
+
 
 const styles = StyleSheet.create({
     pageContainer: {

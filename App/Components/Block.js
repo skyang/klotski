@@ -25,7 +25,6 @@ export default class Block extends React.Component {
     _panStyles = {};
     _initLeft = 10;
     _initTop = 10;
-    _direction = '';    // 初始移动的方向，分为`行`横向移动(row)和`列`纵向移动(column)
 
     _makeStyle ({ type, color, position }) {
         const baseStyle = {
@@ -58,28 +57,26 @@ export default class Block extends React.Component {
         }
     }
 
-    _onPress () {
-        console.log('on press')
-        this.props.onMove(111)
-    }
-
     _updateNativeStyles () {
         console.info('update native style')
         this.panBlock && this.panBlock.setNativeProps(this._panStyles);
     }
 
     _handlePanResponderGrant (e, gestureState) {
+        console.log('start move')
         console.log(e, gestureState)
+        this.props.onStartMove(this.props.block)
     }
 
     _handlePanResponderMove (e, gestureState) {
-        console.log(this._panStyles)
+        console.log('on move')
         this._panStyles.style.left = this._initLeft + gestureState.dx;
         this._panStyles.style.top = this._initTop + gestureState.dy;
         this._updateNativeStyles();
     }
 
     _handlePanResponderEnd (e, gestureState) {
+        console.log('end move')
         this._initLeft += gestureState.dx;
         this._initTop += gestureState.dy;
         // this._panStyles.style.left = this._initLeft;
@@ -122,10 +119,9 @@ export default class Block extends React.Component {
                     this.panBlock = panBlock
                 }}
                 style={this._makeStyle(this.props.block)}
-                onPress={this._onPress.bind(this)}
                 {...this._panResponder.panHandlers}
             >
-                <Text onPress={this._onPress.bind(this)}>
+                <Text>
                     {this.props.block.name}
                 </Text>
             </View>
